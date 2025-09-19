@@ -1,7 +1,6 @@
-// Importa las herramientas necesarias
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import axios from 'axios';
+const { initializeApp, cert, getApps } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+const axios = require('axios');
 
 // Carga las claves secretas desde las Variables de Entorno de Vercel
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
@@ -16,7 +15,7 @@ if (!getApps().length) {
 const db = getFirestore();
 
 // Esta es la función principal que se ejecutará
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   console.log("Iniciando trabajo programado: Actualización de mareas...");
 
   try {
