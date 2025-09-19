@@ -28,17 +28,25 @@ module.exports = async (req, res) => {
       const { id, lat, lng } = zona;
       console.log(`Obteniendo marea para la zona: ${id}`);
       
+      // --- INICIO DE LA MODIFICACIÓN ---
+      // Define el rango de fechas: desde ahora hasta 7 días en el futuro
+      const now = new Date();
+      const start = now.toISOString();
+      const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      // --- FIN DE LA MODIFICACIÓN ---
+
       const response = await axios.get(
-        `https://api.stormglass.io/v2/tide/extremes/point?lat=${lat}&lng=${lng}`,
+        // Añadimos los parámetros 'start' y 'end' a la URL
+        `https://api.stormglass.io/v2/tide/extremes/point?lat=${lat}&lng=${lng}&start=${start}&end=${end}`,
         { headers: { 'Authorization': stormglassApiKey } }
       );
       
-      const mareasDelDia = response.data.data;
+      const mareasDeLaSemana = response.data.data;
       const docRef = db.collection('mareasDiarias').doc(id);
       
-      // 3. Guarda los datos de la marea en la colección 'mareasDiarias'
+      // 3. Guarda los datos de la marea de toda la semana en la colección 'mareasDiarias'
       await docRef.set({
-        mareas: mareasDelDia,
+        mareas: mareasDeLaSemana,
         ultimaActualizacion: new Date()
       });
     });
